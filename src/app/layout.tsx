@@ -5,7 +5,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'Ledger — Personal Finance',
+  title: 'Personal Expense Tracker',
   description: 'Your personal financial ledger dashboard',
 };
 

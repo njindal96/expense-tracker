@@ -154,9 +154,15 @@ export default function Dashboard() {
       {/* Top nav */}
       <header className="sticky top-0 z-10 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 bg-slate-900 rounded-lg" />
-            <span className="text-sm font-semibold text-slate-900 tracking-tight">Ledger</span>
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 bg-slate-900 rounded-lg flex items-center justify-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="7" width="20" height="14" rx="2.5" stroke="white" strokeWidth="2"/>
+                <path d="M7 7V5a5 5 0 0 1 10 0v2" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                <circle cx="12" cy="14" r="2" fill="white"/>
+              </svg>
+            </div>
+            <span className="text-sm font-semibold text-slate-900 tracking-tight">Personal Expense Tracker</span>
           </div>
           <button
             onClick={handleLogout}

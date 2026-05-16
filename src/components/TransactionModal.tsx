@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { X, Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { X, Loader2, Plus, Check } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { CATEGORIES } from '@/lib/utils';
+import { getAllCategories, persistCustomCategory } from '@/lib/categories';
 import type { Transaction, TransactionType, TransactionStatus } from '@/types/transaction';
 
 interface TransactionModalProps {
@@ -31,6 +31,50 @@ export default function TransactionModal({ transaction, onClose, onSave }: Trans
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+
+  // Category combobox state
+  const [categories, setCategories] = useState<string[]>(() => getAllCategories());
+  const [catQuery, setCatQuery] = useState('');
+  const [catOpen, setCatOpen] = useState(false);
+  const catRef = useRef<HTMLDivElement>(null);
+  const catInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (catRef.current && !catRef.current.contains(e.target as Node)) setCatOpen(false);
+    }
+    if (catOpen) document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, [catOpen]);
+
+  const filteredCats = catQuery.trim()
+    ? categories.filter((c) => c.toLowerCase().includes(catQuery.toLowerCase()))
+    : categories;
+  const catExactMatch = categories.some((c) => c.toLowerCase() === catQuery.trim().toLowerCase());
+  const canCreateCat = catQuery.trim().length > 0 && !catExactMatch;
+
+  function selectCategory(name: string) {
+    set('category', name);
+    setCatOpen(false);
+    setCatQuery('');
+  }
+
+  function createCategory() {
+    const name = catQuery.trim();
+    if (!name) return;
+    persistCustomCategory(name);
+    setCategories(getAllCategories());
+    selectCategory(name);
+  }
+
+  function catKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (filteredCats.length === 1) selectCategory(filteredCats[0]);
+      else if (canCreateCat) createCategory();
+    }
+    if (e.key === 'Escape') setCatOpen(false);
+  }
 
   useEffect(() => {
     if (transaction) {
@@ -207,18 +251,62 @@ export default function TransactionModal({ transaction, onClose, onSave }: Trans
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
+            <div ref={catRef} className="relative">
               <label className={labelCls}>Category</label>
-              <select
-                value={form.category}
-                onChange={(e) => set('category', e.target.value)}
-                className={inputCls + ' cursor-pointer'}
+              <button
+                type="button"
+                onClick={() => { setCatOpen((v) => !v); setTimeout(() => catInputRef.current?.focus(), 50); }}
+                className={inputCls + ' text-left flex items-center justify-between cursor-pointer'}
               >
-                <option value="">Select category</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
+                <span className={form.category ? 'text-slate-900' : 'text-slate-400'}>
+                  {form.category || 'Select or create…'}
+                </span>
+                <Plus className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              </button>
+              {catOpen && (
+                <div className="absolute left-0 top-full mt-1 z-50 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                  <div className="px-2.5 pt-2.5 pb-2">
+                    <input
+                      ref={catInputRef}
+                      type="text"
+                      value={catQuery}
+                      onChange={(e) => setCatQuery(e.target.value)}
+                      onKeyDown={catKeyDown}
+                      placeholder="Search or create…"
+                      className="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-slate-50 text-slate-900 placeholder-slate-400 outline-none focus:border-slate-400"
+                    />
+                  </div>
+                  <ul className="max-h-44 overflow-y-auto py-1">
+                    {filteredCats.map((c) => (
+                      <li key={c}>
+                        <button
+                          type="button"
+                          onMouseDown={(e) => { e.preventDefault(); selectCategory(c); }}
+                          className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left transition-colors ${c === form.category ? 'bg-slate-100 font-medium text-slate-900' : 'text-slate-700 hover:bg-slate-50'}`}
+                        >
+                          <span className="flex-1 truncate">{c}</span>
+                          {c === form.category && <Check className="w-3 h-3 shrink-0 text-slate-500" />}
+                        </button>
+                      </li>
+                    ))}
+                    {filteredCats.length === 0 && !canCreateCat && (
+                      <li className="px-3 py-3 text-xs text-slate-400 text-center">No categories found</li>
+                    )}
+                  </ul>
+                  {canCreateCat && (
+                    <div className="border-t border-slate-100 px-2 py-2">
+                      <button
+                        type="button"
+                        onMouseDown={(e) => { e.preventDefault(); createCategory(); }}
+                        className="w-full flex items-center gap-2 px-2.5 py-2 text-xs text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>Create <span className="font-semibold text-slate-900">&quot;{catQuery.trim()}&quot;</span></span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <div>
               <label className={labelCls}>Status</label>

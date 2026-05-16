@@ -43,7 +43,7 @@ export default function AuthGate({ onAuth }: AuthGateProps) {
             <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mb-4">
               <Lock className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-xl font-semibold text-slate-900 tracking-tight">Ledger</h1>
+            <h1 className="text-xl font-semibold text-slate-900 tracking-tight">Personal Expense Tracker</h1>
             <p className="text-sm text-slate-500 mt-1">Enter your master password to continue</p>
           </div>
 

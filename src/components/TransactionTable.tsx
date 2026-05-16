@@ -56,8 +56,8 @@ export default function TransactionTable({
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-      <div className="overflow-x-auto">
+    <div className="bg-white border border-slate-200 rounded-xl">
+      <div className="overflow-x-auto rounded-t-xl">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-100">
