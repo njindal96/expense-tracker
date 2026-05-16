@@ -1,5 +1,18 @@
 import { CATEGORIES } from './utils';
 
+export const CAT_EMOJI: Record<string, string> = {
+  'Food & Dining': '🍜', 'Groceries': '🛒', 'Transport': '🚗',
+  'Shopping': '🛍️', 'Entertainment': '🎬', 'Health & Medical': '💊',
+  'Utilities': '⚡', 'Rent & Housing': '🏠', 'Travel': '✈️',
+  'Education': '📚', 'Salary': '💰', 'Freelance': '💻',
+  'Investment': '📈', 'Transfer': '↔️', 'Subscriptions': '📱',
+  'Insurance': '🛡️', 'Other': '·',
+};
+
+export function getCatEmoji(category: string): string {
+  return CAT_EMOJI[category] ?? '·';
+}
+
 const STORAGE_KEY = 'ledger_custom_categories';
 
 export function getStoredCustomCategories(): string[] {

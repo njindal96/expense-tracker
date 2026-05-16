@@ -2,13 +2,22 @@
 
 @theme inline {
   --font-sans: var(--font-inter);
+  --font-serif: var(--font-serif);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
+
+/* Smooth scrolling */
+html { scroll-behavior: smooth; }
+
+/* Custom scrollbar — thin & warm */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(120,100,70,0.18); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(120,100,70,0.32); }
