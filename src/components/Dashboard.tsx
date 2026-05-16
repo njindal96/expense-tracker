@@ -10,7 +10,7 @@ import StatStrip from './StatStrip';
 import LedgerView, { groupByDate } from './LedgerView';
 import AnalyticsView from './AnalyticsView';
 import TransactionModal from './TransactionModal';
-import DeleteConfirmModal from './DeleteConfirmModal';
+import CategorySheet from './CategorySheet';
 import UndoToast, { type ToastData } from './UndoToast';
 
 const PAGE_SIZE = 50;
@@ -39,13 +39,15 @@ function DesktopNav({ activeTab, onTab, onAdd, onToggleTheme, onLock, search, on
       WebkitBackdropFilter: 'blur(20px) saturate(160%)',
       background: theme.dark ? 'rgba(14,12,9,0.80)' : 'rgba(250,247,242,0.80)',
     }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(auto,340px) minmax(240px,1fr) auto', alignItems: 'center', gap: 16, height: 64, padding: '0 28px', maxWidth: 1440, margin: '0 auto' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(auto,340px) minmax(200px,1fr) auto', alignItems: 'center', gap: 16, height: 64, padding: '0 28px', maxWidth: 1440, margin: '0 auto' }}>
         {/* Left: brand + tabs */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 1, lineHeight: 1, flexShrink: 0 }}>
-            <span style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 22, fontStyle: 'italic', letterSpacing: '-0.005em', color: theme.text }}>Personal</span>
-            <span style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 22, letterSpacing: '-0.005em', color: theme.accent }}>Expenses</span>
+          {/* Wordmark matching lock screen */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 0, lineHeight: 1, flexShrink: 0 }}>
+            <span style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 22, fontStyle: 'italic', letterSpacing: '-0.005em', color: theme.text }}>Quiet</span>
+            <span style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 22, letterSpacing: '-0.005em', color: theme.accent }}>Books</span>
           </div>
+          {/* Tab pills */}
           <div style={{ display: 'flex', gap: 2, padding: 3, border: `1px solid ${theme.borderSoft}`, borderRadius: 99, background: theme.surfaceAlt }}>
             {(['ledger', 'analytics'] as const).map(tab => (
               <button key={tab} onClick={() => onTab(tab)} style={{
@@ -59,9 +61,9 @@ function DesktopNav({ activeTab, onTab, onAdd, onToggleTheme, onLock, search, on
                 fontFamily: 'var(--font-inter), system-ui, sans-serif',
               }}>
                 {tab === 'ledger' ? (
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M3 10L12 4l9 6"/><path d="M5 10v9M19 10v9M9 10v9M15 10v9"/><path d="M3 21h18"/></svg>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M3 10L12 4l9 6"/><path d="M5 10v9M19 10v9M9 10v9M15 10v9"/><path d="M3 21h18"/></svg>
                 ) : (
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg>
                 )}
                 <span style={{ textTransform: 'capitalize' }}>{tab}</span>
               </button>
@@ -70,21 +72,17 @@ function DesktopNav({ activeTab, onTab, onAdd, onToggleTheme, onLock, search, on
         </div>
 
         {/* Center: search + date filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, height: 38, border: `1px solid ${theme.borderSoft}`, borderRadius: 10, padding: '0 10px', background: theme.surface }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={theme.muted} strokeWidth="1.5" strokeLinecap="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-3.5-3.5"/></svg>
-            <input
-              value={search}
-              onChange={e => onSearch(e.target.value)}
-              placeholder="Search merchant or category…"
-              style={{ flex: 1, border: 0, outline: 0, background: 'transparent', fontSize: 13, letterSpacing: '-0.005em', color: theme.text, fontFamily: 'var(--font-inter), system-ui, sans-serif' }}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, height: 38, border: `1px solid ${theme.borderSoft}`, borderRadius: 10, padding: '0 10px', background: theme.surface, minWidth: 0 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={theme.muted} strokeWidth="1.5" strokeLinecap="round" style={{ flexShrink: 0 }}><circle cx="11" cy="11" r="6"/><path d="m20 20-3.5-3.5"/></svg>
+            <input value={search} onChange={e => onSearch(e.target.value)}
+              placeholder="Search merchant, category, bank…"
+              style={{ flex: 1, minWidth: 0, border: 0, outline: 0, background: 'transparent', fontSize: 13, letterSpacing: '-0.005em', color: theme.text, fontFamily: 'var(--font-inter), system-ui, sans-serif' }}
             />
+            <span style={{ fontSize: 10, fontFamily: 'monospace', padding: '3px 6px', border: `1px solid ${theme.borderSoft}`, borderRadius: 5, color: theme.soft, flexShrink: 0 }}>⌘ K</span>
           </div>
-          <select
-            value={dateFilter}
-            onChange={e => onDateFilter(e.target.value as DateFilter)}
-            style={{ height: 38, padding: '0 10px', border: `1px solid ${theme.borderSoft}`, borderRadius: 10, background: theme.surface, color: theme.muted, fontSize: 12.5, outline: 'none', cursor: 'pointer', fontFamily: 'var(--font-inter), system-ui, sans-serif' }}
-          >
+          <select value={dateFilter} onChange={e => onDateFilter(e.target.value as DateFilter)}
+            style={{ height: 38, padding: '0 10px', border: `1px solid ${theme.borderSoft}`, borderRadius: 10, background: theme.surface, color: theme.muted, fontSize: 12.5, outline: 'none', cursor: 'pointer', fontFamily: 'var(--font-inter), system-ui, sans-serif', flexShrink: 0 }}>
             <option value="current_month">This Month</option>
             <option value="last_month">Last Month</option>
             <option value="all_time">All Time</option>
@@ -92,21 +90,19 @@ function DesktopNav({ activeTab, onTab, onAdd, onToggleTheme, onLock, search, on
         </div>
 
         {/* Right: actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button onClick={onAdd} style={{ display: 'flex', alignItems: 'center', gap: 6, border: 0, height: 38, padding: '0 14px', borderRadius: 99, background: theme.text, color: theme.bg, fontSize: 12.5, fontWeight: 500, letterSpacing: '-0.005em', cursor: 'pointer', boxShadow: `0 2px 6px ${theme.shadowSoft}`, fontFamily: 'var(--font-inter), system-ui, sans-serif' }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+          <button onClick={onAdd} style={{ display: 'flex', alignItems: 'center', gap: 6, border: 0, height: 38, padding: '0 14px', borderRadius: 99, background: theme.text, color: theme.bg, fontSize: 12.5, fontWeight: 500, letterSpacing: '-0.005em', cursor: 'pointer', boxShadow: `0 2px 6px ${theme.shadowSoft}`, fontFamily: 'var(--font-inter), system-ui, sans-serif', transition: 'transform 0.12s' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
             New transaction
           </button>
           <span style={{ width: 1, height: 22, background: theme.borderSoft }} />
           <div style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: theme.muted, whiteSpace: 'nowrap' }}>{dayLine}</div>
-          {/* Theme toggle */}
           <button onClick={onToggleTheme} style={{ width: 36, height: 36, border: `1px solid ${theme.borderSoft}`, borderRadius: 10, background: theme.surface, color: theme.muted, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
             {theme.dark
               ? <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
               : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
             }
           </button>
-          {/* Lock */}
           <button onClick={onLock} style={{ width: 36, height: 36, border: `1px solid ${theme.borderSoft}`, borderRadius: 10, background: theme.surface, color: theme.muted, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
           </button>
@@ -138,13 +134,12 @@ export default function Dashboard() {
   const [loadingTable, setLoadingTable] = useState(true);
   const [loadingAll, setLoadingAll] = useState(true);
 
-  // Modals
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const [deletingTransaction, setDeletingTransaction] = useState<{ id: string; merchant: string } | null>(null);
+  // Overlays
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [editingTxn, setEditingTxn] = useState<Transaction | null>(null);
+  const [catSheetTxn, setCatSheetTxn] = useState<Transaction | null>(null);
   const [undoToast, setUndoToast] = useState<ToastData | null>(null);
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function toggleTheme() {
@@ -155,18 +150,15 @@ export default function Dashboard() {
     });
   }
 
-  function handleSearchChange(value: string) {
-    setSearch(value);
+  function handleSearchChange(v: string) {
+    setSearch(v);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => { setDebouncedSearch(value); setPage(1); }, 300);
+    debounceRef.current = setTimeout(() => { setDebouncedSearch(v); setPage(1); }, 300);
   }
 
-  function handleDateFilter(value: DateFilter) {
-    setDateFilter(value);
-    setPage(1);
-  }
+  function handleDateFilter(v: DateFilter) { setDateFilter(v); setPage(1); }
 
-  // Paginated fetch (for ledger)
+  // Paginated fetch
   const fetchTransactions = useCallback(async () => {
     setLoadingTable(true);
     const offset = (page - 1) * PAGE_SIZE;
@@ -181,7 +173,7 @@ export default function Dashboard() {
     if (!error) { setTransactions((data as Transaction[]) ?? []); setTotalCount(count ?? 0); }
   }, [page, debouncedSearch, dateFilter]);
 
-  // Unpaginated fetch (for hero/stats/analytics)
+  // Unpaginated fetch (hero / stats / analytics)
   const fetchAll = useCallback(async () => {
     setLoadingAll(true);
     const range = getDateRange(dateFilter);
@@ -200,13 +192,15 @@ export default function Dashboard() {
   async function handleCategoryUpdate(id: string, oldCat: string, newCat: string) {
     if (oldCat === newCat) return;
     const merchant = transactions.find(t => t.id === id)?.merchant ?? allTxns.find(t => t.id === id)?.merchant ?? '';
-    const update = (arr: Transaction[]) => arr.map(t => t.id === id ? { ...t, category: newCat } : t);
-    setTransactions(update);
-    setAllTxns(update);
+    const patch = (arr: Transaction[]) => arr.map(t => t.id === id ? { ...t, category: newCat } : t);
+    setTransactions(patch); setAllTxns(patch);
+    // Close category sheet and update the row being edited if open
+    setCatSheetTxn(null);
+    if (editingTxn?.id === id) setEditingTxn(prev => prev ? { ...prev, category: newCat } : null);
 
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
     setUndoToast({ txnId: id, merchant, oldCategory: oldCat, newCategory: newCat });
-    toastTimerRef.current = setTimeout(() => setUndoToast(null), 3500);
+    toastTimer.current = setTimeout(() => setUndoToast(null), 3500);
 
     const { error } = await supabase.from('transactions').update({ category: newCat }).eq('id', id);
     if (error) {
@@ -225,11 +219,11 @@ export default function Dashboard() {
   }
 
   function handleSaved(saved: Transaction) {
-    setIsAddModalOpen(false);
-    setEditingTransaction(null);
-    if (editingTransaction) {
-      const update = (arr: Transaction[]) => arr.map(t => t.id === saved.id ? saved : t);
-      setTransactions(update); setAllTxns(update);
+    setIsAddOpen(false);
+    setEditingTxn(null);
+    if (editingTxn) {
+      const patch = (arr: Transaction[]) => arr.map(t => t.id === saved.id ? saved : t);
+      setTransactions(patch); setAllTxns(patch);
     } else {
       setTransactions(prev => [saved, ...prev.slice(0, PAGE_SIZE - 1)]);
       setAllTxns(prev => [saved, ...prev]);
@@ -238,10 +232,10 @@ export default function Dashboard() {
   }
 
   function handleDeleted(id: string) {
-    setDeletingTransaction(null);
     const remove = (arr: Transaction[]) => arr.filter(t => t.id !== id);
     setTransactions(remove); setAllTxns(remove);
     setTotalCount(c => Math.max(0, c - 1));
+    setEditingTxn(null); setIsAddOpen(false);
   }
 
   function handleLogout() {
@@ -249,10 +243,7 @@ export default function Dashboard() {
     window.location.reload();
   }
 
-  // Filter for "needs review" (pending status)
-  const displayTransactions = needsReviewOnly
-    ? transactions.filter(t => t.status === 'pending')
-    : transactions;
+  const displayTransactions = needsReviewOnly ? transactions.filter(t => t.status === 'pending') : transactions;
   const needsReviewCount = transactions.filter(t => t.status === 'pending').length;
   const grouped = groupByDate(displayTransactions);
 
@@ -260,15 +251,12 @@ export default function Dashboard() {
     <ThemeContext.Provider value={theme}>
       <div style={{ minHeight: '100vh', background: theme.bg, color: theme.text, fontFamily: 'var(--font-inter), system-ui, sans-serif' }}>
         <DesktopNav
-          activeTab={activeTab}
-          onTab={setActiveTab}
-          onAdd={() => setIsAddModalOpen(true)}
+          activeTab={activeTab} onTab={setActiveTab}
+          onAdd={() => setIsAddOpen(true)}
           onToggleTheme={toggleTheme}
           onLock={handleLogout}
-          search={search}
-          onSearch={handleSearchChange}
-          dateFilter={dateFilter}
-          onDateFilter={handleDateFilter}
+          search={search} onSearch={handleSearchChange}
+          dateFilter={dateFilter} onDateFilter={handleDateFilter}
         />
 
         <main style={{ maxWidth: 1280, margin: '0 auto', padding: '28px 28px 80px' }}>
@@ -290,40 +278,34 @@ export default function Dashboard() {
                 needsReviewOnly={needsReviewOnly}
                 needsReviewCount={needsReviewCount}
                 onToggleNeedsReview={() => setNeedsReviewOnly(v => !v)}
-                onCategoryUpdate={handleCategoryUpdate}
-                onEdit={tx => setEditingTransaction(tx)}
-                onDelete={id => {
-                  const tx = transactions.find(t => t.id === id);
-                  setDeletingTransaction({ id, merchant: tx?.merchant ?? '' });
-                }}
+                onCategoryClick={txn => setCatSheetTxn(txn)}
+                onRowClick={txn => setEditingTxn(txn)}
               />
             </div>
           )}
           {activeTab === 'analytics' && (
-            <AnalyticsView
-              txns={loadingAll ? [] : allTxns}
-              dateFilter={dateFilter}
-              onDateFilter={handleDateFilter}
-            />
+            <AnalyticsView txns={loadingAll ? [] : allTxns} dateFilter={dateFilter} onDateFilter={handleDateFilter} />
           )}
         </main>
 
-        {/* Modals */}
-        {(isAddModalOpen || editingTransaction) && (
+        {/* Overlays */}
+        {(isAddOpen || editingTxn) && (
           <TransactionModal
-            transaction={editingTransaction}
-            onClose={() => { setIsAddModalOpen(false); setEditingTransaction(null); }}
+            transaction={editingTxn}
+            onClose={() => { setIsAddOpen(false); setEditingTxn(null); }}
             onSave={handleSaved}
+            onDelete={handleDeleted}
           />
         )}
-        {deletingTransaction && (
-          <DeleteConfirmModal
-            transactionId={deletingTransaction.id}
-            merchantName={deletingTransaction.merchant}
-            onClose={() => setDeletingTransaction(null)}
-            onDeleted={handleDeleted}
+
+        {catSheetTxn && (
+          <CategorySheet
+            txn={catSheetTxn}
+            onClose={() => setCatSheetTxn(null)}
+            onPick={newCat => handleCategoryUpdate(catSheetTxn.id, catSheetTxn.category, newCat)}
           />
         )}
+
         {undoToast && <UndoToast toast={undoToast} onUndo={handleUndoCategory} />}
       </div>
     </ThemeContext.Provider>

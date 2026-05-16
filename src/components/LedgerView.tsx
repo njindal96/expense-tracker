@@ -21,9 +21,8 @@ interface LedgerViewProps {
   needsReviewOnly: boolean;
   needsReviewCount: number;
   onToggleNeedsReview: () => void;
-  onCategoryUpdate: (id: string, oldCat: string, newCat: string) => void;
-  onEdit: (txn: Transaction) => void;
-  onDelete: (id: string) => void;
+  onCategoryClick: (txn: Transaction) => void;
+  onRowClick: (txn: Transaction) => void;
 }
 
 function formatDayHeader(dateStr: string): string {
@@ -59,9 +58,8 @@ export default function LedgerView({
   needsReviewOnly,
   needsReviewCount,
   onToggleNeedsReview,
-  onCategoryUpdate,
-  onEdit,
-  onDelete,
+  onCategoryClick,
+  onRowClick,
 }: LedgerViewProps) {
   const theme = useTheme();
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
@@ -144,9 +142,8 @@ export default function LedgerView({
                   txn={txn}
                   isFirst={i === 0}
                   isLast={i === group.rows.length - 1}
-                  onCategoryUpdate={onCategoryUpdate}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
+                  onCategoryClick={onCategoryClick}
+                  onRowClick={onRowClick}
                 />
               </div>
             ))}

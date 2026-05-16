@@ -89,13 +89,11 @@ export default function AuthGate({ onAuth }: AuthGateProps) {
         {/* Center: wordmark + date */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
           <div style={{ fontSize: 13, fontWeight: 500, color: theme.muted, letterSpacing: '0.005em' }}>{dateLine}</div>
-          <h1 style={{ margin: 0, fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 72, lineHeight: 0.92, letterSpacing: '-0.02em', color: theme.text }}>
-            Personal
-            <span style={{ display: 'block', fontStyle: 'italic', color: theme.accent }}>Expense</span>
-            Tracker
+          <h1 style={{ margin: 0, fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 76, lineHeight: 0.9, letterSpacing: '-0.02em', color: theme.text }}>
+            Quiet<span style={{ fontStyle: 'italic', color: theme.accent }}>Books</span>
           </h1>
           <div style={{ fontSize: 13.5, lineHeight: 1.4, color: theme.muted, maxWidth: 240, marginTop: 4 }}>
-            A calm place for your personal finances.
+            A calm place for the month&apos;s numbers.
           </div>
         </div>
 

@@ -11,8 +11,8 @@ const serif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: 'Personal Expense Tracker',
-  description: 'Your personal financial ledger dashboard',
+  title: 'QuietBooks',
+  description: 'A calm place for your personal finances',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
