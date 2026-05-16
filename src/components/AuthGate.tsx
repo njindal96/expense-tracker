@@ -13,7 +13,7 @@ const PIN_LENGTH = 4;
 // 3×4 numpad layout — empty string = invisible spacer
 const KEYS = ['1','2','3','4','5','6','7','8','9','','0','⌫'] as const;
 
-function NumKey({ label, onClick, theme }: { label: string; onClick: () => void; theme: Theme }) {
+function NumKey({ label, onClick, theme, height = 72 }: { label: string; onClick: () => void; theme: Theme; height?: number }) {
   const isBack = label === '⌫';
   const [pressed, setPressed] = useState(false);
 
@@ -23,7 +23,7 @@ function NumKey({ label, onClick, theme }: { label: string; onClick: () => void;
       onPointerUp={() => { setPressed(false); onClick(); }}
       onPointerLeave={() => setPressed(false)}
       style={{
-        height: 72, width: '100%', borderRadius: 99,
+        height, width: '100%', borderRadius: 99,
         border: isBack ? 'none' : `1px solid ${theme.borderSoft}`,
         background: isBack
           ? 'transparent'
@@ -112,20 +112,20 @@ export default function AuthGate({ onAuth }: AuthGateProps) {
 
   // ── shared inner content ────────────────────────────────
   const inner = (
-    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', padding: isMobile ? '52px 24px 32px' : '44px 40px 36px' }}>
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', position: 'relative', padding: isMobile ? '52px 24px 32px' : '40px 40px 32px', gap: 0 }}>
       {/* Grain */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: `radial-gradient(circle at 30% 20%, rgba(180,140,90,0.08), transparent 45%), radial-gradient(circle at 70% 80%, rgba(120,90,60,0.06), transparent 50%)`, mixBlendMode: 'multiply' }} />
 
       {/* Top label */}
-      <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 500, color: theme.muted, display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }}>
+      <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 500, color: theme.muted, display: 'flex', alignItems: 'center', gap: 8, position: 'relative', marginBottom: 16 }}>
         <span style={{ width: 6, height: 6, borderRadius: 99, background: theme.muted, opacity: 0.45, display: 'inline-block' }} />
         Private ledger
       </div>
 
-      {/* Wordmark area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 10, position: 'relative' }}>
+      {/* Wordmark — fixed height, no flex:1 */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, position: 'relative', marginBottom: 32 }}>
         <div style={{ fontSize: 13, fontWeight: 500, color: theme.muted }}>{dateLine}</div>
-        <h1 style={{ margin: 0, fontFamily: 'var(--font-serif), Georgia, serif', fontSize: isMobile ? 62 : 68, lineHeight: 0.92, letterSpacing: '-0.02em', color: theme.text }}>
+        <h1 style={{ margin: 0, fontFamily: 'var(--font-serif), Georgia, serif', fontSize: isMobile ? 62 : 64, lineHeight: 0.92, letterSpacing: '-0.02em', color: theme.text }}>
           Quiet<span style={{ fontStyle: 'italic', color: theme.accent }}>Books</span>
         </h1>
         <div style={{ fontSize: 13, lineHeight: 1.4, color: theme.muted, maxWidth: 240, marginTop: 2 }}>
@@ -134,7 +134,7 @@ export default function AuthGate({ onAuth }: AuthGateProps) {
       </div>
 
       {/* PIN dots */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, marginBottom: 24, position: 'relative' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, marginBottom: 28, position: 'relative' }}>
         <div
           style={{ display: 'flex', gap: 14, justifyContent: 'center' }}
           className={shake ? 'pin-shake' : ''}
@@ -167,6 +167,7 @@ export default function AuthGate({ onAuth }: AuthGateProps) {
               key={i}
               label={key}
               theme={theme}
+              height={isMobile ? 72 : 64}
               onClick={() => key === '⌫' ? pressBackspace() : pressDigit(key)}
             />
           );
@@ -174,7 +175,7 @@ export default function AuthGate({ onAuth }: AuthGateProps) {
       </div>
 
       {/* Footer */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center', fontSize: 11, color: theme.soft, letterSpacing: '0.01em', marginTop: 20, position: 'relative' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center', fontSize: 11, color: theme.soft, letterSpacing: '0.01em', marginTop: 24, position: 'relative' }}>
         <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
           <path d="M2 6V4a3.5 3.5 0 017 0v2" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
           <rect x="1" y="6" width="9" height="6.5" rx="1.2" stroke="currentColor" strokeWidth="1"/>
