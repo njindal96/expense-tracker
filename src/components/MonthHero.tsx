@@ -2,6 +2,7 @@
 
 import { useTheme } from '@/lib/theme';
 import { formatCurrency } from '@/lib/utils';
+import { useIsMobile } from '@/lib/useIsMobile';
 import type { Transaction, DateFilter } from '@/types/transaction';
 
 interface MonthHeroProps {
@@ -23,6 +24,7 @@ function heroLabel(dateFilter: DateFilter): string {
 
 export default function MonthHero({ txns, dateFilter }: MonthHeroProps) {
   const theme = useTheme();
+  const isMobile = useIsMobile();
   const outflow = txns.filter(t => t.type === 'debit').reduce((s, t) => s + t.amount, 0);
   const inflow = txns.filter(t => t.type === 'credit').reduce((s, t) => s + t.amount, 0);
   const net = inflow - outflow;
@@ -37,7 +39,7 @@ export default function MonthHero({ txns, dateFilter }: MonthHeroProps) {
       </div>
 
       {/* Net amount */}
-      <div style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 52, lineHeight: 1.05, letterSpacing: '-0.02em', color: net >= 0 ? theme.credit : theme.text, fontStyle: 'italic' }}>
+      <div style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: isMobile ? 44 : 52, lineHeight: 1.05, letterSpacing: '-0.02em', color: net >= 0 ? theme.credit : theme.text, fontStyle: 'italic' }}>
         {net >= 0 ? '+' : ''}{formatCurrency(net)}
       </div>
       <div style={{ fontSize: 13, fontStyle: 'italic', fontFamily: 'var(--font-serif), Georgia, serif', color: theme.muted, marginTop: -4 }}>

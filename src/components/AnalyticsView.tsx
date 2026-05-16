@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { useTheme, hueForCat, catBg, catFg } from '@/lib/theme';
 import { formatCurrency } from '@/lib/utils';
 import { getCatEmoji } from '@/lib/categories';
+import { useIsMobile } from '@/lib/useIsMobile';
 import type { Transaction, DateFilter } from '@/types/transaction';
 
 interface AnalyticsViewProps {
@@ -192,6 +193,7 @@ export default function AnalyticsView({ txns, dateFilter, onDateFilter }: Analyt
     return arr;
   }, [filtered, period, now]);
 
+  const isMobile = useIsMobile();
   const avgPerDay = series.length ? total / series.length : 0;
   const periodLabel = period === 'month'
     ? now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
@@ -230,8 +232,8 @@ export default function AnalyticsView({ txns, dateFilter, onDateFilter }: Analyt
         ))}
       </div>
 
-      {/* Desktop 2-col: donut + category list */}
-      <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '20px 32px', alignItems: 'start' }}>
+      {/* Responsive 2-col on desktop, single col on mobile */}
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '320px 1fr', gap: isMobile ? 16 : '20px 32px', alignItems: 'start' }}>
         {/* Left: donut + summary */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Donut card */}
@@ -270,9 +272,9 @@ export default function AnalyticsView({ txns, dateFilter, onDateFilter }: Analyt
           {/* Account filter */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div style={sectionLabel}>By account</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            <div style={{ display: 'flex', gap: 6, flexWrap: isMobile ? 'nowrap' : 'wrap', overflowX: isMobile ? 'auto' : 'visible', paddingBottom: isMobile ? 4 : 0 }}>
               {banks.map(b => (
-                <button key={b} onClick={() => setAccount(b)} style={chipStyle(account === b)}>
+                <button key={b} onClick={() => setAccount(b)} style={{ ...chipStyle(account === b), flexShrink: 0 }}>
                   {b === 'all' ? 'All accounts' : b}
                 </button>
               ))}

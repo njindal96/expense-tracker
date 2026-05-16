@@ -23,6 +23,7 @@ interface LedgerViewProps {
   onToggleNeedsReview: () => void;
   onCategoryClick: (txn: Transaction) => void;
   onRowClick: (txn: Transaction) => void;
+  stickyDayOffset?: number;
 }
 
 function formatDayHeader(dateStr: string): string {
@@ -60,6 +61,7 @@ export default function LedgerView({
   onToggleNeedsReview,
   onCategoryClick,
   onRowClick,
+  stickyDayOffset,
 }: LedgerViewProps) {
   const theme = useTheme();
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
@@ -129,7 +131,7 @@ export default function LedgerView({
       {/* Grouped day sections */}
       {!loading && grouped.map(group => (
         <section key={group.key}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '0.10em', fontWeight: 500, color: theme.muted, padding: '6px 2px', marginBottom: 6 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '0.10em', fontWeight: 500, color: theme.muted, padding: '6px 2px', marginBottom: 6, ...(stickyDayOffset != null ? { position: 'sticky', top: stickyDayOffset, zIndex: 2, background: theme.bg } : {}) }}>
             <span>{group.label}</span>
             <span style={{ flex: 1, height: 1, background: theme.borderSoft, opacity: 0.7 }} />
             <span style={{ fontFamily: 'monospace', fontSize: 9.5, opacity: 0.7 }}>{group.rows.length}</span>

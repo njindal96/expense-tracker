@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { LIGHT, DARK, type Theme } from '@/lib/theme';
+import { useIsMobile } from '@/lib/useIsMobile';
 
 interface AuthGateProps {
   onAuth: () => void;
@@ -16,6 +17,7 @@ export default function AuthGate({ onAuth }: AuthGateProps) {
   const pwRef = useRef('');
   const masterPw = process.env.NEXT_PUBLIC_MASTER_PASSWORD ?? '';
   const theme: Theme = isDark ? DARK : LIGHT;
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (typeof window !== 'undefined' && localStorage.getItem('ledger_authed') === 'true') {
@@ -62,7 +64,7 @@ export default function AuthGate({ onAuth }: AuthGateProps) {
   const dateLine = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
 
   return (
-    <div style={{ background: theme.bg, color: theme.text, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40, fontFamily: 'var(--font-inter), system-ui, sans-serif' }}>
+    <div style={{ background: theme.bg, color: theme.text, minHeight: '100vh', display: 'flex', alignItems: isMobile ? 'stretch' : 'center', justifyContent: 'center', padding: isMobile ? 0 : 40, fontFamily: 'var(--font-inter), system-ui, sans-serif' }}>
       {/* Theme toggle */}
       <button
         onClick={() => setIsDark(v => !v)}
@@ -76,7 +78,7 @@ export default function AuthGate({ onAuth }: AuthGateProps) {
         )}
       </button>
 
-      <div style={{ width: '100%', maxWidth: 460, height: 580, border: `1px solid ${theme.borderSoft}`, borderRadius: 28, overflow: 'hidden', boxShadow: `0 30px 70px ${theme.shadow}`, background: theme.bg, position: 'relative', display: 'flex', flexDirection: 'column', padding: '52px 40px 36px' }}>
+      <div style={{ width: '100%', maxWidth: isMobile ? '100%' : 460, height: isMobile ? '100vh' : 580, border: isMobile ? 'none' : `1px solid ${theme.borderSoft}`, borderRadius: isMobile ? 0 : 28, overflow: 'hidden', boxShadow: isMobile ? 'none' : `0 30px 70px ${theme.shadow}`, background: theme.bg, position: 'relative', display: 'flex', flexDirection: 'column', padding: isMobile ? '52px 28px 36px' : '52px 40px 36px' }}>
         {/* Grain overlay */}
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: `radial-gradient(circle at 30% 20%, rgba(180,140,90,0.08), transparent 45%), radial-gradient(circle at 70% 80%, rgba(120,90,60,0.06), transparent 50%)`, mixBlendMode: 'multiply' }} />
 
